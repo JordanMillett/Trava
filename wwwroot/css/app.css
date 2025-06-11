@@ -1,0 +1,13 @@
+:root
+{
+    --theme-text: var(black);
+    --theme-background: var(white);
+}
+
+
+html, body
+{
+    font-family: "Commissioner", sans-serif;
+    background-color: var(--theme-background);
+    color: var(--theme-text);
+}

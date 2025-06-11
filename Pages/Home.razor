@@ -1,0 +1,47 @@
+@page "/home"
+@using Trava.Repositories
+@inject TranslationService Translation
+@inject MorphologyService Morphology
+
+<h1>Home</h1>
+
+<Button Color="ButtonColor.Primary" class="btn" @onclick="Process">Process Text</Button>
+<br><br>
+
+<div class="row">
+    <div class="col-6">
+        <textarea @bind="Input"></textarea>
+    </div>
+    <div class="col-6">
+        <textarea readonly @bind="Output"></textarea>
+    </div>
+</div>
+
+<style>
+    textarea
+    {
+    resize: none;
+    min-width: 100%;
+    height: 500px;
+    }
+</style>
+
+@code 
+{
+    string Input = "";
+    string Output = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Morphology.TryStartPython();
+    }
+
+    public void Process()
+    {
+        string cleaned = Regex.Replace(Input, @"[^\w\s]", "");  
+        string[] words = cleaned.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        var lemmas = words.Select(word => Morphology.Lemmatize(word));
+        Output = Output = string.Join(" ", lemmas);
+    }
+}
+
