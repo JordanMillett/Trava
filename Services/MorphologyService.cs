@@ -4,6 +4,8 @@ namespace Trava.Services;
 
 public class MorphologyService
 {
+    private dynamic? morphAnalyzer;
+
     public MorphologyService()
     {
         
@@ -23,21 +25,25 @@ public class MorphologyService
                 await Task.Delay(100);
 
             Console.WriteLine("Python Started.");
+
+            using (Py.GIL())
+            {
+                dynamic pymorphy2 = Py.Import("pymorphy2");
+                morphAnalyzer = pymorphy2.MorphAnalyzer();
+            }
         }
     }
 
     public string Lemmatize(string word)
     {
-        using (Py.GIL()) // Acquire GIL for thread safety
+        if (morphAnalyzer == null)
+            return "";
+
+        using (Py.GIL())
         {
-            dynamic pymorphy2 = Py.Import("pymorphy2");
-            dynamic morph = pymorphy2.MorphAnalyzer();
-
-            dynamic parse = morph.parse(word);
-            dynamic best = parse[0]; // Best guess for parse
-            string lemma = best.normal_form.ToString();
-
-            return lemma;
+            dynamic parse = morphAnalyzer.parse(word);
+            dynamic best = parse[0];
+            return best.normal_form.ToString();
         }
     }
 }

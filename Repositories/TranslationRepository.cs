@@ -18,11 +18,36 @@ public class TranslationRepository
 {
     private readonly SQLiteConnection db;
 
+    private static readonly char[] splitChars = { ',' , ';'};
+
     public TranslationRepository(string databasePath)
     {
         db = new SQLiteConnection(databasePath);
         db.CreateTable<TranslationRecord>();
     }
+
+    public string? GetTranslation(string term)
+    {
+        TranslationRecord record = db.Table<TranslationRecord>().Where(t => t.Term == term).OrderByDescending(t => t.EntryID).FirstOrDefault();
+        
+        //return record?.Translation;
+
+        if(record != null)
+        {
+            string[] words = record.Translation.Split(splitChars, StringSplitOptions.TrimEntries);
+
+            if(words[0].StartsWith('('))
+                return words[1];
+
+            if(words[0].Contains('('))
+                return words[0].Split()[0];
+
+            return words[0];
+        }
+
+        return null;
+    }
+
 
     /*
     public void AddMessage(string userId, string content)

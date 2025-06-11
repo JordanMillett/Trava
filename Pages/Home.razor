@@ -31,17 +31,39 @@
     string Input = "";
     string Output = "";
 
+    List<string> InputTokens;
+    List<string> OutputTokens;
+
     protected override async Task OnInitializedAsync()
     {
         await Morphology.TryStartPython();
     }
 
     public void Process()
-    {
-        string cleaned = Regex.Replace(Input, @"[^\w\s]", "");  
-        string[] words = cleaned.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-        var lemmas = words.Select(word => Morphology.Lemmatize(word));
-        Output = Output = string.Join(" ", lemmas);
+    {   
+        InputTokens = Regex.Matches(Input, @"\w+|[^\w\s]+|\s+")
+                    .Cast<Match>()
+                    .Select(m => m.Value)
+                    .ToList();
+
+        OutputTokens = [];
+            
+        foreach (string token in InputTokens)
+        {
+            if (Regex.IsMatch(token, @"^\w+$"))  // If token is a word
+            {
+                var lemma = Morphology.Lemmatize(token);
+                var translation = Translation.Repository.GetTranslation(lemma) ?? token;
+                OutputTokens.Add(translation);
+            }
+            else
+            {
+                // Punctuation or whitespace - keep as is
+                OutputTokens.Add(token);
+            }
+        }
+
+        Output = string.Concat(OutputTokens);
     }
 }
 

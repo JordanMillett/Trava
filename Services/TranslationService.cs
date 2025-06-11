@@ -9,7 +9,7 @@ public class TranslationService
 
     public TranslationService()
     {
-        databasePath = "data.db";
+        databasePath = "translations.db";
         Repository = new TranslationRepository(databasePath);
     }
 }
