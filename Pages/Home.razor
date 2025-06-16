@@ -8,12 +8,28 @@
 <Button Color="ButtonColor.Primary" class="btn" @onclick="Process">Process Text</Button>
 <br><br>
 
+@foreach (var term in Terms)
+{
+    if(term.key != null)
+    {
+        <HoverWord Term="@term"/>
+    }else if (Regex.IsMatch(term.text, @"^\r?\n$"))
+    {
+        <br>
+    }else if(string.IsNullOrWhiteSpace(term.text))
+    {
+        @((MarkupString)"&nbsp;")  
+    }else
+    {
+        @term.text
+    }
+}
+
+<br><br>
+
 <div class="row">
-    <div class="col-6">
-        <textarea @bind="Input"></textarea>
-    </div>
-    <div class="col-6">
-        <textarea readonly @bind="Output"></textarea>
+    <div class="col-12">
+        <textarea @bind="InputText"></textarea>
     </div>
 </div>
 
@@ -28,11 +44,9 @@
 
 @code 
 {
-    string Input = "";
-    string Output = "";
+    string InputText = "";
 
-    List<string> InputTokens;
-    List<string> OutputTokens;
+    List<(string key, string text)> Terms = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,30 +54,41 @@
     }
 
     public void Process()
-    {   
-        InputTokens = Regex.Matches(Input, @"\w+|[^\w\s]+|\s+")
-                    .Cast<Match>()
-                    .Select(m => m.Value)
-                    .ToList();
+    {
+        Terms = new List<(string key, string text)>();
 
-        OutputTokens = [];
-            
-        foreach (string token in InputTokens)
+        var lines = Regex.Split(InputText, @"\r?\n");
+
+        foreach (var line in lines)
         {
-            if (Regex.IsMatch(token, @"^\w+$"))  // If token is a word
+            if (string.IsNullOrWhiteSpace(line))
             {
-                var lemma = Morphology.Lemmatize(token);
-                var translation = Translation.Repository.GetTranslation(lemma) ?? token;
-                OutputTokens.Add(translation);
+                // Treat empty lines as a special term
+                Terms.Add((null, "\n"));
+                continue;
             }
-            else
-            {
-                // Punctuation or whitespace - keep as is
-                OutputTokens.Add(token);
-            }
-        }
 
-        Output = string.Concat(OutputTokens);
+            var tokens = Regex.Matches(line, @"\w+|[^\w\s]+|\s+")
+                .Cast<Match>()
+                .Select(m =>
+                {
+                    string token = m.Value;
+
+                    if (Regex.IsMatch(token, @"^\w+$"))
+                    {
+                        string key = Morphology.Lemmatize(token);
+                        return (key, token);
+                    }
+                    else
+                    {
+                        return ((string)null, token);
+                    }
+                });
+
+            Terms.AddRange(tokens);
+            // Add explicit newline to mark line break
+            Terms.Add((null, "\n"));
+        }
     }
 }
 

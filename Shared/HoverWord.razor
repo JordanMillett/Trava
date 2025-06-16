@@ -1,0 +1,32 @@
+@inject TranslationService Translation
+
+<span class="hoverspace" @onmouseover="GetTranslation">
+    <span class="term">@Term.text</span>
+    <div class="popup">
+        @if(Translations != null)
+        {
+            <span><strong>@Term.key</strong></span>
+            
+            @foreach (string translated in Translations)
+            {
+                <br><span>• @translated</span>
+            }
+        }
+        else
+        {
+            <span><strong><i>unknown term</i></strong></span>
+        }
+    </div>
+</span>
+
+@code 
+{
+    [Parameter] public (string key, string text) Term { get; set; }
+
+    public string[] Translations;
+
+    public void GetTranslation()
+    {
+        Translations = Translation.Repository.GetTranslationAsLines(Term.key) ?? null;
+    }
+}

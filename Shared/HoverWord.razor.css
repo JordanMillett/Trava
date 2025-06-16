@@ -1,0 +1,39 @@
+.hoverspace
+{
+    position: relative;
+    font-size: 0;
+}
+
+.hoverspace > * 
+{
+    font-size: 16px;
+}
+
+.term 
+{
+    cursor: pointer;
+}
+
+.hoverspace:hover .popup 
+{
+    display: block;
+}
+
+.hoverspace:hover .term 
+{
+    text-decoration: underline;
+}
+
+.popup
+{
+    display: none;
+    position: absolute;
+    /*top: -3.5em;*/
+    left: -0.5em;
+    background: white;
+    padding: 6px;
+    border-style: solid;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 1000;
+}

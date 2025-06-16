@@ -18,8 +18,6 @@ public class TranslationRepository
 {
     private readonly SQLiteConnection db;
 
-    private static readonly char[] splitChars = { ',' , ';'};
-
     public TranslationRepository(string databasePath)
     {
         db = new SQLiteConnection(databasePath);
@@ -30,19 +28,27 @@ public class TranslationRepository
     {
         TranslationRecord record = db.Table<TranslationRecord>().Where(t => t.Term == term).OrderByDescending(t => t.EntryID).FirstOrDefault();
         
-        //return record?.Translation;
-
         if(record != null)
-        {
-            string[] words = record.Translation.Split(splitChars, StringSplitOptions.TrimEntries);
+        {   
+            string[] parts = record.Translation.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
-            if(words[0].StartsWith('('))
-                return words[1];
+            var primaryTranslations = parts
+                .Select(p => p.Split(',')[0].Trim())
+                .Where(p => !string.IsNullOrWhiteSpace(p));
 
-            if(words[0].Contains('('))
-                return words[0].Split()[0];
+            return string.Join(", ", primaryTranslations);
+        }
 
-            return words[0];
+        return null;
+    }
+
+    public string[]? GetTranslationAsLines(string term)
+    {
+        TranslationRecord record = db.Table<TranslationRecord>().Where(t => t.Term == term).OrderByDescending(t => t.EntryID).FirstOrDefault();
+        
+        if(record != null)
+        {   
+            return record.Translation.Split(';', StringSplitOptions.RemoveEmptyEntries);
         }
 
         return null;
