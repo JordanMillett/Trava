@@ -8,24 +8,23 @@
 <Button Color="ButtonColor.Primary" class="btn" @onclick="Process">Process Text</Button>
 <br><br>
 
-<!--
-@foreach (var term in Terms)
+@foreach (RussianLemma lemma in Lemmas)
 {
-    if(term.key != null)
+    if(!string.IsNullOrEmpty(lemma.NormalForm))
     {
-        <HoverWord Term="@term"/>
-    }else if (Regex.IsMatch(term.text, @"^\r?\n$"))
+        //<span>@lemma.NormalForm</span>
+        //<HoverWord Term="@term"/>
+    }else if (Regex.IsMatch(lemma.DisplayText, @"^\r?\n$"))
     {
         <br>
-    }else if(string.IsNullOrWhiteSpace(term.text))
+    }else if(string.IsNullOrWhiteSpace(lemma.DisplayText))
     {
         @((MarkupString)"&nbsp;")  
     }else
     {
-        @term.text
+        @lemma.DisplayText
     }
 }
--->
 
 <br><br>
 
@@ -48,7 +47,7 @@
 {
     string InputText = "";
 
-    List<(string original, RussianLemma lemma)> Terms = [];
+    List<RussianLemma> Lemmas = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,7 +56,7 @@
 
     public void Process()
     {
-        Terms = [];
+        Lemmas = [];
 
         var lines = Regex.Split(InputText, @"\r?\n");
 
@@ -65,29 +64,29 @@
         {
             if (string.IsNullOrWhiteSpace(line))
             {
-                Terms.Add(("\n", null));
+                Lemmas.Add(new RussianLemma("\n"));
                 continue;
             }
 
-            var lemmas = Regex.Matches(line, @"\w+|[^\w\s]+|\s+")
+            var found = Regex.Matches(line, @"\w+|[^\w\s]+|\s+")
                 .Cast<Match>()
                 .Select(m =>
                 {
-                    string original = m.Value;
+                    string displayText = m.Value;
 
-                    if (Regex.IsMatch(original, @"^\w+$"))
+                    if (Regex.IsMatch(displayText, @"^\w+$"))
                     {
-                        RussianLemma lemma = Morphology.Lemmatize(original);
-                        return (original, lemma);
+                        RussianLemma lemma = Morphology.Lemmatize(displayText);
+                        return lemma;
                     }
                     else
                     {
-                        return (original, null);
+                        return new RussianLemma(displayText);
                     }
                 });
 
-            Terms.AddRange(lemmas);
-            Terms.Add(("\n", null));
+            Lemmas.AddRange(found);
+            Lemmas.Add(new RussianLemma("\n"));
         }
     }
 }

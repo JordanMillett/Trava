@@ -30,17 +30,17 @@ public class MorphologyService
         }
     }
 
-    public RussianLemma? Lemmatize(string original)
+    public RussianLemma? Lemmatize(string displayText)
     {
         if (morphAnalyzer == null)
             return null;
 
         using (Py.GIL())
         {
-            dynamic parse = morphAnalyzer.parse(original);
+            dynamic parse = morphAnalyzer.parse(displayText);
             dynamic best = parse[0];
 
-            RussianLemma? created = RussianLemmaParser.ExtractLemma(best);
+            RussianLemma created = RussianLemmaParser.ExtractLemma(displayText, best);
 
             return created; 
         }

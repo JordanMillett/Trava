@@ -11,6 +11,11 @@ public class RussianRepository
         db = new SQLiteConnection(databasePath);
     }
 
+    public NounRecord? GetNoun(string key)
+    {
+        return db.Table<NounRecord>().Where(t => t.Term == key).OrderByDescending(t => t.EntryID).FirstOrDefault();
+    }
+
     /*
     public string? GetTranslation(string term)
     {
