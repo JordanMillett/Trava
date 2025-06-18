@@ -31,7 +31,10 @@
                 string[] definitions = Term.Translation.Split(";");
                 foreach (string definition in definitions)
                 {
-                    <span>• @definition</span><br>
+                    if(!string.IsNullOrEmpty(definition))
+                    {
+                        <span>• @definition</span><br>
+                    }
                 }
             }
             else
