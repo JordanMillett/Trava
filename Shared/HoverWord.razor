@@ -1,16 +1,24 @@
 @inject TranslationService Translation
 
 <span class="hoverspace" @onmouseover="GetTranslation">
-    <span class="term">@Lemma.NormalForm</span>
+    <span class="term">@Lemma.DisplayText</span>
     <div class="popup">
         @if(HoverLoaded)
         {
             @if(Term != null)
             {
-                if(Term is RussianNoun)
+                <span><strong>@Term.Term</strong> - (@Lemma.PartOfSpeech.ToString())</span>
+                if(Term is RussianNoun noun)
                 {
-                    <span><strong>@Term.Term</strong></span>
-                    <br><span>• @Term.Translation</span>
+                    
+                    //@noun.GetDescriptor(Lemma.DisplayText.ToLower()) <--GET IT FROM THE LEMMA INSTEAD
+                    
+                }
+
+                string[] definitions = Term.Translation.Split(";");
+                foreach (string definition in definitions)
+                {
+                    <br><span>• @definition</span>
                 }
             }
             else

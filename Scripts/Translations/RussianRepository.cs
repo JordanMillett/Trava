@@ -30,4 +30,15 @@ public class RussianRepository
     {
         return db.Table<OtherRecord>().Where(t => t.Term == key).OrderByDescending(t => t.EntryID).FirstOrDefault();
     }
+
+    public OtherRecord? TryGetFromAny(string key)
+    {
+        OtherRecord? found = null;
+        found ??= GetNoun(key);
+        found ??= GetAdjective(key);
+        found ??= GetVerb(key);
+        found ??= GetOther(key);
+
+        return found;
+    }
 }

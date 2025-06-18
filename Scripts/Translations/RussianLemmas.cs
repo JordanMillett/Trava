@@ -3,8 +3,13 @@ namespace Trava.Scripts.Translations;
 public enum PartOfSpeechType
 {
     Noun,
+    Adverb,
     Verb,
     Adjective,
+    Pronoun,
+    Particle,
+    Preposition,
+    Conjuction,
     Other
 }
 
@@ -32,6 +37,9 @@ public static class RussianLemmaParser
         {
             lemma.NormalForm = data.normal_form.ToString();
             lemma.PartOfSpeech = ParsePartOfSpeech(data.tag.POS.ToString());
+
+            //if(displayText == "тем")
+                //Console.WriteLine(data.tag.POS.ToString());
         }
 
         return lemma;
@@ -49,12 +57,12 @@ public static class RussianLemmaParser
         { "PRTS",  PartOfSpeechType.Verb},
         { "GRND",  PartOfSpeechType.Verb},
         { "NUMR",  PartOfSpeechType.Noun},
-        { "ADVB",  PartOfSpeechType.Other},
-        { "NPRO",  PartOfSpeechType.Other},
+        { "ADVB",  PartOfSpeechType.Adverb},
+        { "NPRO",  PartOfSpeechType.Pronoun},
         { "PRED",  PartOfSpeechType.Other},
-        { "PREP",  PartOfSpeechType.Other},
-        { "CONJ",  PartOfSpeechType.Other},
-        { "PRCL",  PartOfSpeechType.Other},
+        { "PREP",  PartOfSpeechType.Preposition},
+        { "CONJ",  PartOfSpeechType.Conjuction},
+        { "PRCL",  PartOfSpeechType.Particle},
         { "INTJ",  PartOfSpeechType.Other},
     };
 

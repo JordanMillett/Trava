@@ -2,7 +2,7 @@ using SQLite;
 
 namespace Trava.Scripts.Translations;
 
-public record AdjectiveRecord
+public record OtherRecord
 {
     [PrimaryKey, AutoIncrement]
     public int EntryID { get; set; }
@@ -10,6 +10,10 @@ public record AdjectiveRecord
     public string Term { get; set; } = default!;
     public string Stressed { get; set; } = default!;
     public string Translation { get; set; } = default!;
+}
+
+public record AdjectiveRecord : OtherRecord
+{
     public string Comparative { get; set; } = default!;
     public string Superlative { get; set; } = default!;
     public string ShortMasculine { get; set; } = default!;
@@ -42,14 +46,8 @@ public record AdjectiveRecord
     public string PrepositionalPlural { get; set; } = default!;
 }
 
-public record NounRecord
+public record NounRecord : OtherRecord
 {
-    [PrimaryKey, AutoIncrement]
-    public int EntryID { get; set; }
-
-    public string Term { get; set; } = default!;
-    public string Stressed { get; set; } = default!;
-    public string Translation { get; set; } = default!;
     public string Gender { get; set; } = default!;
     public string Animate { get; set; } = default!;
     public string Indeclinable { get; set; } = default!;
@@ -69,14 +67,8 @@ public record NounRecord
     public string PrepositionalPlural { get; set; } = default!;
 }
 
-public record VerbRecord
+public record VerbRecord : OtherRecord
 {
-    [PrimaryKey, AutoIncrement]
-    public int EntryID { get; set; }
-
-    public string Term { get; set; } = default!;
-    public string Stressed { get; set; } = default!;
-    public string Translation { get; set; } = default!;
     public string Aspect { get; set; } = default!;
     public string AspectualPartner { get; set; } = default!;
     public string SingularImperative { get; set; } = default!;
@@ -91,14 +83,4 @@ public record VerbRecord
     public string FirstPersonPlural { get; set; } = default!;
     public string SecondPersonPlural { get; set; } = default!;
     public string ThirdPersonPlural { get; set; } = default!;
-}
-
-public record OtherRecord
-{
-    [PrimaryKey, AutoIncrement]
-    public int EntryID { get; set; }
-
-    public string Term { get; set; } = default!;
-    public string Stressed { get; set; } = default!;
-    public string Translation { get; set; } = default!;
 }
