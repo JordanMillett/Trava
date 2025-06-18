@@ -7,7 +7,7 @@ public class RussianMaps : Profile
     public RussianMaps()
     {
         CreateMap<NounRecord, RussianNoun>()
-            .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => RussianParser.ParseGender(src.Gender)))
+            .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => RussianTermParser.ParseGender(src.Gender)))
             .ForMember(dest => dest.Animate, opt => opt.MapFrom(src => Convert.ToBoolean(src.Animate)))
             .ForMember(dest => dest.Indeclinable, opt => opt.MapFrom(src => Convert.ToBoolean(src.Indeclinable)))
             .ForMember(dest => dest.Uncountable, opt => opt.MapFrom(src => Convert.ToBoolean(src.Uncountable)))
@@ -74,11 +74,11 @@ public class RussianNoun : RussianTerm
     public required string PrepositionalPlural { get; set; } = default!;
 }
 
-public static class RussianParser
+public static class RussianTermParser
 {
     private static readonly IMapper Mapper;
 
-    static RussianParser()
+    static RussianTermParser()
     {
         var config = new MapperConfiguration(cfg =>
         {

@@ -1,3 +1,4 @@
+@using Trava.Scripts.Translations
 @inject TranslationService Translation
 
 <span class="hoverspace" @onmouseover="GetTranslation">
@@ -21,12 +22,13 @@
 
 @code 
 {
-    [Parameter] public (string key, string text) Term { get; set; }
+    [Parameter] public RussianLemma Lemma { get; set; }
 
-    public string[] Translations;
+    public RussianTerm Term;
 
     public void GetTranslation()
     {
+        Term = RussianParser.
         //Translations = Translation.Repository.GetTranslationAsLines(Term.key) ?? null;
     }
 }

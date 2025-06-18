@@ -13,6 +13,6 @@ public class TranslationService
 
     public RussianTerm? ConvertToTerm(RussianLemma lemma)
     {
-        return RussianParser.ConvertToTerm(Repository, lemma);
+        return RussianTermParser.ConvertToTerm(Repository, lemma);
     }
 }
