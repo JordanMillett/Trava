@@ -1,24 +1,26 @@
 @inject TranslationService Translation
 
 <span class="hoverspace" @onmouseover="GetTranslation">
-    <span class="term">@Lemma.DisplayText</span>
+    <span class="term @GetCSSColor()">@Lemma.DisplayText</span>
     <div class="popup">
         @if(HoverLoaded)
         {
             @if(Term != null)
             {
-                <span><strong>@Term.Term</strong> - (@Lemma.PartOfSpeech.ToString())</span>
+                <span><small>@Lemma.PartOfSpeech.ToString()</small></span>
+                
                 if(Term is RussianNoun noun)
                 {
-                    
-                    //@noun.GetDescriptor(Lemma.DisplayText.ToLower()) <--GET IT FROM THE LEMMA INSTEAD
-                    
+                    <span><small> (@Lemma.GetNounDescription())</small></span>
                 }
 
+                <br>
+                <span><strong>@Lemma.NormalForm</strong>  ← @Lemma.DisplayText</span>
+                <hr style="margin: 0; padding:0;">
                 string[] definitions = Term.Translation.Split(";");
                 foreach (string definition in definitions)
                 {
-                    <br><span>• @definition</span>
+                    <span>• @definition</span><br>
                 }
             }
             else
@@ -29,6 +31,18 @@
     </div>
 </span>
 
+<style>
+    .noun { background-color: #FFFF77; }      
+    .verb { background-color: #FFAE77; }    
+    .adjective { background-color: #AEFF77; }  
+    .adverb { background-color: #FFEDCC; }    
+    .pronoun { background-color: #FFEDCC; }  
+    .particle { background-color: #FFEDCC; } 
+    .preposition { background-color: #FFEDCC; }
+    .conjunction { background-color: #FFEDCC; } 
+    .other { background-color: #FFEDCC; }      
+</style>
+
 @code 
 {
     [Parameter] public RussianLemma Lemma { get; set; }
@@ -38,8 +52,24 @@
 
     public void GetTranslation()
     {
-        if(!HoverLoaded)
+        //if(!HoverLoaded)
             Term = Translation.ConvertToTerm(Lemma);
         HoverLoaded = true;
+    }
+
+    public string GetCSSColor()
+    {
+        return Lemma.PartOfSpeech switch
+        {
+            PartOfSpeechType.Noun => "noun",
+            PartOfSpeechType.Verb => "verb",
+            PartOfSpeechType.Adjective => "adjective",
+            PartOfSpeechType.Adverb => "adverb",
+            PartOfSpeechType.Pronoun => "pronoun",
+            PartOfSpeechType.Particle => "particle",
+            PartOfSpeechType.Preposition => "preposition",
+            PartOfSpeechType.Conjuction => "conjunction",
+            _ => "other"
+        };
     }
 }

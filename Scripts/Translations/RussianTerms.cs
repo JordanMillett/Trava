@@ -19,11 +19,12 @@ public class RussianMaps : Profile
     }
 }
 
-public enum RussianGenderType
+public enum GenderType
 {
     Masculine,
     Feminine,
-    Neuter
+    Neuter,
+    None
 }
 
 /*
@@ -62,7 +63,7 @@ public class RussianTerm
 
 public class RussianNoun : RussianTerm
 {
-    public required RussianGenderType Gender { get; set; } = default!;
+    public required GenderType Gender { get; set; } = default!;
     public required bool Animate { get; set; } = default!;
     public required bool Indeclinable { get; set; } = default!;
     public required bool Uncountable { get; set; } = default!;
@@ -203,17 +204,17 @@ public static class RussianTermParser
         return term;
     }
 
-    private static readonly Dictionary<string, RussianGenderType> genderMap = new()
+    private static readonly Dictionary<string, GenderType> genderMap = new()
     {
-        { "m", RussianGenderType.Masculine },
-        { "f", RussianGenderType.Feminine },
-        { "n", RussianGenderType.Neuter }
+        { "m", GenderType.Masculine },
+        { "f", GenderType.Feminine },
+        { "n", GenderType.Neuter }
     };
 
-    public static RussianGenderType ParseGender(string? raw)
+    public static GenderType ParseGender(string? raw)
     {
         if (raw != null && genderMap.TryGetValue(raw, out var value))
             return value;
-        return RussianGenderType.Masculine;
+        return GenderType.None;
     }
 }
