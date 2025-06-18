@@ -1,21 +1,22 @@
-@using Trava.Scripts.Translations
 @inject TranslationService Translation
 
 <span class="hoverspace" @onmouseover="GetTranslation">
-    <span class="term">@Term.text</span>
+    <span class="term">@Lemma.NormalForm</span>
     <div class="popup">
-        @if(Translations != null)
+        @if(HoverLoaded)
         {
-            <span><strong>@Term.key</strong></span>
-            
-            @foreach (string translated in Translations)
+            @if(Term != null)
             {
-                <br><span>• @translated</span>
+                if(Term is RussianNoun)
+                {
+                    <span><strong>@Term.Term</strong></span>
+                    <br><span>• @Term.Translation</span>
+                }
             }
-        }
-        else
-        {
-            <span><strong><i>unknown term</i></strong></span>
+            else
+            {
+                <span><strong><i>unknown term</i></strong></span>
+            }
         }
     </div>
 </span>
@@ -24,11 +25,13 @@
 {
     [Parameter] public RussianLemma Lemma { get; set; }
 
-    public RussianTerm Term;
+    bool HoverLoaded = false;
+    RussianTerm Term = null!;
 
     public void GetTranslation()
     {
-        Term = RussianParser.
-        //Translations = Translation.Repository.GetTranslationAsLines(Term.key) ?? null;
+        if(!HoverLoaded)
+            Term = Translation.ConvertToTerm(Lemma);
+        HoverLoaded = true;
     }
 }

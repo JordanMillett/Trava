@@ -8,10 +8,10 @@ public class RussianMaps : Profile
     {
         CreateMap<NounRecord, RussianNoun>()
             .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => RussianTermParser.ParseGender(src.Gender)))
-            .ForMember(dest => dest.Animate, opt => opt.MapFrom(src => Convert.ToBoolean(src.Animate)))
-            .ForMember(dest => dest.Indeclinable, opt => opt.MapFrom(src => Convert.ToBoolean(src.Indeclinable)))
-            .ForMember(dest => dest.Uncountable, opt => opt.MapFrom(src => Convert.ToBoolean(src.Uncountable)))
-            .ForMember(dest => dest.PluralOnly, opt => opt.MapFrom(src => Convert.ToBoolean(src.PluralOnly)));
+            .ForMember(dest => dest.Animate, opt => opt.MapFrom(src => src.Animate == "1"))
+            .ForMember(dest => dest.Indeclinable, opt => opt.MapFrom(src => src.Indeclinable == "1"))
+            .ForMember(dest => dest.Uncountable, opt => opt.MapFrom(src => src.Uncountable == "1"))
+            .ForMember(dest => dest.PluralOnly, opt => opt.MapFrom(src => src.PluralOnly == "1"));
     }
 }
 
@@ -95,7 +95,7 @@ public static class RussianTermParser
             _ => null
         };
 
-        RussianTerm? term;
+        RussianTerm? term = null;
 
         if(retrieved is NounRecord noun)
         {
@@ -103,7 +103,7 @@ public static class RussianTermParser
             term.Term = lemma.NormalForm;
         }
 
-        return null;
+        return term;
     }
 
     private static readonly Dictionary<string, RussianGenderType> genderMap = new()

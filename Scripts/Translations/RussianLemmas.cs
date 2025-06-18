@@ -31,7 +31,7 @@ public static class RussianLemmaParser
         if(data.normal_form != null)
         {
             lemma.NormalForm = data.normal_form.ToString();
-            lemma.PartOfSpeech = ParsePartOfSpeech(data.POS);
+            lemma.PartOfSpeech = ParsePartOfSpeech(data.tag.POS.ToString());
         }
 
         return lemma;

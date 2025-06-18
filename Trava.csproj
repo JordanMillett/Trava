@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <NoWarn>IDE0290</NoWarn>
+    <NoWarn>IDE0290;IDE0017;IDE0090</NoWarn>
   </PropertyGroup>
 
 </Project>
