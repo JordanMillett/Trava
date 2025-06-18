@@ -1,5 +1,5 @@
 @page "/home"
-@using Trava.Repositories
+@using Trava.Scripts.Translations
 @inject TranslationService Translation
 @inject MorphologyService Morphology
 
@@ -8,6 +8,7 @@
 <Button Color="ButtonColor.Primary" class="btn" @onclick="Process">Process Text</Button>
 <br><br>
 
+<!--
 @foreach (var term in Terms)
 {
     if(term.key != null)
@@ -24,6 +25,7 @@
         @term.text
     }
 }
+-->
 
 <br><br>
 
@@ -46,7 +48,7 @@
 {
     string InputText = "";
 
-    List<(string key, string text)> Terms = [];
+    List<(string original, RussianLemma lemma)> Terms = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,7 +57,7 @@
 
     public void Process()
     {
-        Terms = new List<(string key, string text)>();
+        Terms = [];
 
         var lines = Regex.Split(InputText, @"\r?\n");
 
@@ -63,31 +65,29 @@
         {
             if (string.IsNullOrWhiteSpace(line))
             {
-                // Treat empty lines as a special term
-                Terms.Add((null, "\n"));
+                Terms.Add(("\n", null));
                 continue;
             }
 
-            var tokens = Regex.Matches(line, @"\w+|[^\w\s]+|\s+")
+            var lemmas = Regex.Matches(line, @"\w+|[^\w\s]+|\s+")
                 .Cast<Match>()
                 .Select(m =>
                 {
-                    string token = m.Value;
+                    string original = m.Value;
 
-                    if (Regex.IsMatch(token, @"^\w+$"))
+                    if (Regex.IsMatch(original, @"^\w+$"))
                     {
-                        string key = Morphology.Lemmatize(token);
-                        return (key, token);
+                        RussianLemma lemma = Morphology.Lemmatize(original);
+                        return (original, lemma);
                     }
                     else
                     {
-                        return ((string)null, token);
+                        return (original, null);
                     }
                 });
 
-            Terms.AddRange(tokens);
-            // Add explicit newline to mark line break
-            Terms.Add((null, "\n"));
+            Terms.AddRange(lemmas);
+            Terms.Add(("\n", null));
         }
     }
 }

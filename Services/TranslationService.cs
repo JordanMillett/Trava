@@ -4,10 +4,15 @@ namespace Trava.Services;
 
 public class TranslationService
 {
-    public RussianRepository Russian { get; init; }
+    private RussianRepository Repository { get; init; }
 
     public TranslationService()
     {
-        Russian = new RussianRepository("russian.db");
+        Repository = new RussianRepository("russian.db");
+    }
+
+    public RussianTerm? ConvertToTerm(RussianLemma lemma)
+    {
+        return RussianParser.ConvertToTerm(Repository, lemma);
     }
 }

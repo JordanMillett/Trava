@@ -7,11 +7,6 @@ public class MorphologyService
 {
     private dynamic? morphAnalyzer;
 
-    public MorphologyService()
-    {
-        
-    }
-
     public async Task TryStartPython()
     {
         if(!PythonEngine.IsInitialized)
@@ -45,7 +40,7 @@ public class MorphologyService
             dynamic parse = morphAnalyzer.parse(original);
             dynamic best = parse[0];
 
-            RussianLemma? created = RussianParser.CreateLemma(best);
+            RussianLemma? created = RussianLemmaParser.ExtractLemma(best);
 
             return created; 
         }

@@ -1,13 +1,4 @@
-using SQLite;
-
 namespace Trava.Scripts.Translations;
-
-public class RussianLemma
-{
-    public string NormalForm { get; set; } = default!;
-    public string Stressed { get; set; } = default!;
-    public string Translation { get; set; } = default!;
-}
 
 public enum RussianGenderType
 {
@@ -16,7 +7,14 @@ public enum RussianGenderType
     Neuter
 }
 
-public class RussianNoun : RussianLemma
+public class RussianTerm
+{
+    public string Term { get; set; } = default!;
+    public string Stressed { get; set; } = default!;
+    public string Translation { get; set; } = default!;
+}
+
+public class RussianNoun : RussianTerm
 {
     public RussianGenderType Gender { get; set; } = default!;
     public string Animate { get; set; } = default!;
@@ -39,8 +37,23 @@ public class RussianNoun : RussianLemma
 
 public static class RussianParser
 {
-    public static RussianLemma? CreateLemma(dynamic data)
+    public static RussianTerm? ConvertToTerm(RussianRepository repository, RussianLemma lemma)
     {
+        //LOOKUP
         return null;
+    }
+
+    private static readonly Dictionary<string, RussianGenderType> genderMap = new()
+    {
+        { "m", RussianGenderType.Masculine },
+        { "f", RussianGenderType.Feminine },
+        { "n", RussianGenderType.Neuter }
+    };
+
+    public static RussianGenderType ParseGender(string? raw)
+    {
+        if (raw != null && genderMap.TryGetValue(raw, out var gender))
+            return gender;
+        return RussianGenderType.Masculine;
     }
 }
