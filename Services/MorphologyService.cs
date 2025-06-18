@@ -40,7 +40,11 @@ public class MorphologyService
             dynamic parse = morphAnalyzer.parse(displayText);
             dynamic best = parse[0];
 
-            RussianLemma created = RussianLemmaParser.ExtractLemma(displayText, best);
+            List<string> grammemes = [];
+            foreach (PyObject item in best.tag.grammemes)
+                grammemes.Add(item.ToString()!);
+
+            RussianLemma created = RussianLemmaParser.ExtractLemma(displayText, best, grammemes);
 
             return created; 
         }

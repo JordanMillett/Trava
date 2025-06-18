@@ -1,3 +1,4 @@
+@using Trava.Pages
 @inject TranslationService Translation
 
 <span class="hoverspace" @onmouseover="GetTranslation">
@@ -12,6 +13,16 @@
                 if(Term is RussianNoun noun)
                 {
                     <span><small> (@Lemma.GetNounDescription())</small></span>
+                }
+
+                if(Term is RussianAdjective adjective)
+                {
+                    <span><small> (@Lemma.GetAdjectiveDescription())</small></span>
+                }
+
+                if(Term is RussianVerb verb)
+                {
+                    <span><small> (@Lemma.GetVerbDescription())</small></span>
                 }
 
                 <br>
@@ -32,20 +43,19 @@
 </span>
 
 <style>
-    .noun { background-color: #FFFF77; }      
-    .verb { background-color: #FFAE77; }    
-    .adjective { background-color: #AEFF77; }  
-    .adverb { background-color: #FFEDCC; }    
-    .pronoun { background-color: #FFEDCC; }  
-    .particle { background-color: #FFEDCC; } 
-    .preposition { background-color: #FFEDCC; }
-    .conjunction { background-color: #FFEDCC; } 
-    .other { background-color: #FFEDCC; }      
+    .yellow { background-color: #FFFF77; }      
+    .red { background-color: #FFAE77; }    
+    .green { background-color: #AEFF77; }
+    .blue { background-color: #77C9FF; } 
+    .purple { background-color: #C977FF; } 
+    .pink { background-color: #FF77E4; } 
+    .tan { background-color: #FFEDCC; }      
 </style>
 
 @code 
 {
-    [Parameter] public RussianLemma Lemma { get; set; }
+    [Parameter, EditorRequired] public RussianLemma Lemma { get; set; }
+    [Parameter, EditorRequired] public Home.HighlightTypes SelectedHighlight { get; set; }
 
     bool HoverLoaded = false;
     RussianTerm Term = null!;
@@ -59,17 +69,33 @@
 
     public string GetCSSColor()
     {
-        return Lemma.PartOfSpeech switch
-        {
-            PartOfSpeechType.Noun => "noun",
-            PartOfSpeechType.Verb => "verb",
-            PartOfSpeechType.Adjective => "adjective",
-            PartOfSpeechType.Adverb => "adverb",
-            PartOfSpeechType.Pronoun => "pronoun",
-            PartOfSpeechType.Particle => "particle",
-            PartOfSpeechType.Preposition => "preposition",
-            PartOfSpeechType.Conjuction => "conjunction",
-            _ => "other"
-        };
+        if(SelectedHighlight == Home.HighlightTypes.None)
+            return "";
+
+        if(SelectedHighlight == Home.HighlightTypes.PartsOfSpeech)
+            return Lemma.PartOfSpeech switch
+            {
+                PartOfSpeechType.Noun => "yellow",
+                PartOfSpeechType.Verb => "red",
+                PartOfSpeechType.Adjective => "green",
+                _ => "tan"
+            };
+        
+        if(SelectedHighlight == Home.HighlightTypes.NounCase)
+            return "";
+
+        if(SelectedHighlight == Home.HighlightTypes.NounCase)
+            return Lemma.NounCase switch
+            {
+                NounCaseType.Nominative => "yellow",
+                NounCaseType.Accusative => "red",
+                NounCaseType.Genitive => "green",
+                NounCaseType.Prepositional => "blue",
+                NounCaseType.Instrumental => "purple",
+                NounCaseType.Dative => "pink",
+                _ => "tan"
+            };
+
+        return "";
     }
 }

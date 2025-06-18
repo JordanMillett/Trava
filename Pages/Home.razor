@@ -6,6 +6,21 @@
 <h1>Home</h1>
 
 <Button Color="ButtonColor.Primary" class="btn" @onclick="Process">Process Text</Button>
+
+<Dropdown Color="DropdownColor.Primary">
+    <DropdownToggleButton>
+        Highlight: @SelectedHighlight.ToString()
+    </DropdownToggleButton>
+    <DropdownMenu>
+        @foreach (var choice in Enum.GetValues<HighlightTypes>())
+        {
+            <DropdownItem @onclick="() => SelectHighlight(choice)">
+                @choice.ToString()
+            </DropdownItem>
+        }
+    </DropdownMenu>
+</Dropdown>
+
 <br><br>
 
 @foreach (RussianLemma lemma in Lemmas)
@@ -13,7 +28,7 @@
     if(!string.IsNullOrEmpty(lemma.NormalForm))
     {
         //<span>@lemma.NormalForm</span>
-        <HoverWord Lemma="@lemma"/>
+        <HoverWord Lemma="@lemma" SelectedHighlight="@SelectedHighlight"/>
     }else if (Regex.IsMatch(lemma.DisplayText, @"^\r?\n$"))
     {
         <br>
@@ -45,6 +60,15 @@
 
 @code 
 {
+    public enum HighlightTypes
+    {
+        None,
+        PartsOfSpeech,
+        NounCase
+    }
+
+    public HighlightTypes SelectedHighlight = HighlightTypes.None;
+
     string InputText = "";
 
     List<RussianLemma> Lemmas = [];
@@ -52,6 +76,11 @@
     protected override async Task OnInitializedAsync()
     {
         await Morphology.TryStartPython();
+    }
+
+    private void SelectHighlight(HighlightTypes chosen)
+    {
+        SelectedHighlight = chosen;
     }
 
     public void Process()

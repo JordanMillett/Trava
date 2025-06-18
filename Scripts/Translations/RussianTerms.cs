@@ -27,33 +27,6 @@ public enum GenderType
     None
 }
 
-/*
-    public string GetDescriptor(string value)
-    {
-        Console.WriteLine(PrepositionalSingular);
-
-        string termCase = value switch
-        {
-            var v when v == NominativeSingular.Replace("\'","") => "Nominative Singular",
-            var v when v == GenitiveSingular.Replace("\'","") => "Genitive Singular",
-            var v when v == DativeSingular.Replace("\'","") => "Dative Singular",
-            var v when v == AccusativeSingular.Replace("\'","") => "Accusative Singular",
-            var v when v == InstrumentalSingular.Replace("\'","") => "Instrumental Singular",
-            var v when v == PrepositionalSingular.Replace("\'","") => "Prepositional Singular",
-            var v when v == NominativePlural.Replace("\'","") => "Nominative Plural",
-            var v when v == GenitivePlural.Replace("\'","") => "Genitive Plural",
-            var v when v == DativePlural.Replace("\'","") => "Dative Plural",
-            var v when v == AccusativePlural.Replace("\'","") => "Accusative Plural",
-            var v when v == InstrumentalPlural.Replace("\'","") => "Instrumental Plural",
-            var v when v == PrepositionalPlural.Replace("\'","") => "Prepositional Plural",
-            _ => "Unknown Case"
-        };
-
-        string termGender = Gender.ToString();
-
-        return $"{termGender} {termCase}";
-    }*/
-
 public class RussianTerm
 {
     public required string Term { get; set; } = default!;
