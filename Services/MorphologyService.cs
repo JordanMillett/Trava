@@ -1,3 +1,4 @@
+using Trava.Scripts.Translations;
 using Python.Runtime;
 
 namespace Trava.Services;
@@ -34,16 +35,19 @@ public class MorphologyService
         }
     }
 
-    public string Lemmatize(string word)
+    public RussianLemma? Lemmatize(string original)
     {
         if (morphAnalyzer == null)
-            return "";
+            return null;
 
         using (Py.GIL())
         {
-            dynamic parse = morphAnalyzer.parse(word);
+            dynamic parse = morphAnalyzer.parse(original);
             dynamic best = parse[0];
-            return best.normal_form.ToString();
+
+            RussianLemma? created = RussianParser.CreateLemma(best);
+
+            return created; 
         }
     }
 }

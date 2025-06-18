@@ -1,29 +1,17 @@
 using SQLite;
 
-namespace Trava.Repositories;
+namespace Trava.Scripts.Translations;
 
-public record TranslationRecord
-{
-    [PrimaryKey, AutoIncrement]
-    public int EntryID { get; set; }
-
-    [Indexed]
-    public string Term { get; set; } = default!;
-
-    [NotNull]
-    public string Translation { get; set; } = default!;
-}
-
-public class TranslationRepository
+public class RussianRepository
 {
     private readonly SQLiteConnection db;
 
-    public TranslationRepository(string databasePath)
+    public RussianRepository(string databasePath)
     {
         db = new SQLiteConnection(databasePath);
-        db.CreateTable<TranslationRecord>();
     }
 
+    /*
     public string? GetTranslation(string term)
     {
         TranslationRecord record = db.Table<TranslationRecord>().Where(t => t.Term == term).OrderByDescending(t => t.EntryID).FirstOrDefault();
@@ -53,7 +41,7 @@ public class TranslationRepository
 
         return null;
     }
-
+    */
 
     /*
     public void AddMessage(string userId, string content)

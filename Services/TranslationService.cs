@@ -1,15 +1,13 @@
-using Trava.Repositories;
+using Trava.Scripts.Translations;
 
 namespace Trava.Services;
 
 public class TranslationService
 {
-    private readonly string databasePath;
-    public TranslationRepository Repository { get; init; }
+    public RussianRepository Russian { get; init; }
 
     public TranslationService()
     {
-        databasePath = "translations.db";
-        Repository = new TranslationRepository(databasePath);
+        Russian = new RussianRepository("russian.db");
     }
 }
