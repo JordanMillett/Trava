@@ -10,7 +10,8 @@ public enum PartOfSpeechType
     Particle,
     Preposition,
     Conjuction,
-    Other
+    Other,
+    Unknown
 }
 
 public enum NounCaseType
@@ -125,7 +126,7 @@ public static class RussianLemmaParser
     {
         if (raw != null && partOfSpeechMap.TryGetValue(raw, out var value))
             return value;
-        return PartOfSpeechType.Other;
+        return PartOfSpeechType.Unknown;
     }
 
     private static readonly Dictionary<string, NounCaseType> nounCaseMap = new()

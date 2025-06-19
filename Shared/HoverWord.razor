@@ -1,7 +1,8 @@
 @using Trava.Pages
 @inject TranslationService Translation
+@inject TextToSpeechService TTS
 
-<span class="hoverspace" @onmouseover="GetTranslation">
+<span class="hoverspace" @onclick="ReadAloud" @onmouseover="GetTranslation">
     <span class="term @GetCSSColor()">@Lemma.DisplayText</span>
     <div class="popup">
         @if(HoverLoaded)
@@ -10,19 +11,11 @@
             {
                 <span><small>@Lemma.PartOfSpeech.ToString()</small></span>
                 
-                if(Term is RussianNoun noun)
-                {
-                    <span><small> (@Lemma.GetNounDescription())</small></span>
-                }
+                string description = GetDescription();
 
-                if(Term is RussianAdjective adjective)
+                if(!string.IsNullOrEmpty(description))
                 {
-                    <span><small> (@Lemma.GetAdjectiveDescription())</small></span>
-                }
-
-                if(Term is RussianVerb verb)
-                {
-                    <span><small> (@Lemma.GetVerbDescription())</small></span>
+                    <span><small> (@description)</small></span>
                 }
 
                 <br>
@@ -70,6 +63,32 @@
         HoverLoaded = true;
     }
 
+    public string GetDescription()
+    {
+        if(Term is RussianNoun noun)
+            return Lemma.GetNounDescription();
+
+        if(Term is RussianAdjective adjective)
+            return Lemma.GetAdjectiveDescription();
+
+        if(Term is RussianVerb verb)
+            return Lemma.GetVerbDescription();
+
+        return "";
+    }
+
+    public async Task ReadAloud()
+    {
+        try
+        {
+            await TTS.SpeakAsync($"{Lemma.DisplayText}, и в словаре - {Lemma.NormalForm}");
+            await TTS.SpeakAsync($"This is a {GetDescription()} {Lemma.PartOfSpeech}, which translates to - {Term.Translation.Replace(",", " - or  ").Replace(";", " - and also - ")}", true);
+        }catch
+        {
+           //TTS.Speak("There has been an error.", true);
+        }
+    }
+
     public string GetCSSColor()
     {
         if(SelectedHighlight == Home.HighlightTypes.None)
@@ -81,23 +100,26 @@
                 PartOfSpeechType.Noun => "yellow",
                 PartOfSpeechType.Verb => "red",
                 PartOfSpeechType.Adjective => "green",
+                PartOfSpeechType.Unknown => "",
                 _ => "tan"
             };
-        
-        if(SelectedHighlight == Home.HighlightTypes.NounCase)
-            return "";
 
         if(SelectedHighlight == Home.HighlightTypes.NounCase)
-            return Lemma.NounCase switch
+        {
+            if(Lemma.PartOfSpeech != PartOfSpeechType.Unknown)
             {
-                NounCaseType.Nominative => "yellow",
-                NounCaseType.Accusative => "red",
-                NounCaseType.Genitive => "green",
-                NounCaseType.Prepositional => "blue",
-                NounCaseType.Instrumental => "purple",
-                NounCaseType.Dative => "pink",
-                _ => "tan"
-            };
+                return Lemma.NounCase switch
+                {
+                    NounCaseType.Nominative => "yellow",
+                    NounCaseType.Accusative => "red",
+                    NounCaseType.Genitive => "green",
+                    NounCaseType.Prepositional => "blue",
+                    NounCaseType.Instrumental => "purple",
+                    NounCaseType.Dative => "pink",
+                    _ => "tan"
+                };
+            }
+        }
 
         return "";
     }

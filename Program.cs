@@ -10,6 +10,7 @@ builder.Services.AddSingleton<MorphologyService>();
 builder.Services.AddSingleton<TranslationService>();
 
 //PER CLIENT INSTANCE
+builder.Services.AddScoped<TextToSpeechService>();
 //builder.Services.AddScoped<ClientService>();
 
 builder.Services.AddBlazorBootstrap();
