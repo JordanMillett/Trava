@@ -1,17 +1,19 @@
 using Microsoft.JSInterop;
 
-public class TextToSpeechService
-{
-    IJSRuntime Runtime;
+namespace Trava.Blazor.Services.Client;
 
-    public TextToSpeechService(IJSRuntime JS)
+public class ISpeechService
+{
+    private readonly IJSRuntime Runtime;
+
+    public ISpeechService(IJSRuntime JS)
     {
         Runtime = JS;
     }
 
-    public void Preload()
+    public async Task Preload()
     {   
-        _ = Runtime.InvokeVoidAsync("textToSpeech.preload");
+        await Runtime.InvokeVoidAsync("textToSpeech.preload");
     }
 
     public void Speak(string text, bool english = false)

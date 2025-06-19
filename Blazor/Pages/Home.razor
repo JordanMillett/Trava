@@ -1,8 +1,5 @@
 @page "/home"
-@using Trava.Scripts.Translations
-@inject TranslationService Translation
-@inject MorphologyService Morphology
-@inject TextToSpeechService TTS
+@inject ILemmaService LemmaService
 
 <h1>Home</h1>
 
@@ -24,7 +21,7 @@
 
 <br><br>
 
-@foreach (RussianLemma lemma in Lemmas)
+@foreach (Lemma lemma in Lemmas)
 {
     if(!string.IsNullOrEmpty(lemma.NormalForm))
     {
@@ -72,13 +69,7 @@
 
     string InputText = "";
 
-    List<RussianLemma> Lemmas = [];
-
-    protected override async Task OnInitializedAsync()
-    {
-        TTS.Preload();
-        await Morphology.TryStartPython();
-    }
+    List<Lemma> Lemmas = [];
 
     private void SelectHighlight(HighlightTypes chosen)
     {
@@ -95,7 +86,7 @@
         {
             if (string.IsNullOrWhiteSpace(line))
             {
-                Lemmas.Add(new RussianLemma("\n"));
+                Lemmas.Add(new Lemma("\n"));
                 continue;
             }
 
@@ -107,17 +98,17 @@
 
                     if (Regex.IsMatch(displayText, @"^\w+$"))
                     {
-                        RussianLemma lemma = Morphology.Lemmatize(displayText);
+                        Lemma lemma = LemmaService.Lemmatize(displayText);
                         return lemma;
                     }
                     else
                     {
-                        return new RussianLemma(displayText);
+                        return new Lemma(displayText);
                     }
                 });
 
             Lemmas.AddRange(found);
-            Lemmas.Add(new RussianLemma("\n"));
+            Lemmas.Add(new Lemma("\n"));
         }
     }
 }

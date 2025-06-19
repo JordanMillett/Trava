@@ -31,10 +31,24 @@ window.textToSpeech =
         });
     },
     preload: function() {
-        speechSynthesis.getVoices();
-        
-        var utterance = new SpeechSynthesisUtterance("Preload");
-        utterance.volume = 0;
-        speechSynthesis.speak(utterance);
+        return new Promise(function(resolve, reject) 
+        {
+            speechSynthesis.getVoices();
+            
+            var utterance = new SpeechSynthesisUtterance("Preload");
+            utterance.volume = 0;
+            
+            utterance.onend = function() 
+            {
+                resolve();
+            };
+
+            utterance.onerror = function(e) 
+            {
+                reject(e.error);
+            };
+            
+            speechSynthesis.speak(utterance);
+        });
     }
 };

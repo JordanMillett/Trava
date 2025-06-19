@@ -1,6 +1,6 @@
-@using Trava.Pages
-@inject TranslationService Translation
-@inject TextToSpeechService TTS
+@using Trava.Blazor.Pages
+@inject ILexemeService LexemeService
+@inject ISpeechService SpeechService
 
 <span class="hoverspace" @onclick="ReadAloud" @onmouseover="GetTranslation">
     <span class="term @GetCSSColor()">@Lemma.DisplayText</span>
@@ -51,28 +51,28 @@
 
 @code 
 {
-    [Parameter, EditorRequired] public RussianLemma Lemma { get; set; }
+    [Parameter, EditorRequired] public Lemma Lemma { get; set; }
     [Parameter, EditorRequired] public Home.HighlightTypes SelectedHighlight { get; set; }
 
     bool HoverLoaded = false;
-    RussianTerm Term = null!;
+    Lexeme Term = null!;
 
     public void GetTranslation()
     {
         //if(!HoverLoaded)
-            Term = Translation.ConvertToTerm(Lemma);
+            Term = LexemeService.ConvertToLexeme(Lemma);
         HoverLoaded = true;
     }
 
     public string GetDescription()
     {
-        if(Term is RussianNoun noun)
+        if(Term is NounLexeme noun)
             return Lemma.GetNounDescription();
 
-        if(Term is RussianAdjective adjective)
+        if(Term is AdjectiveLexeme adjective)
             return Lemma.GetAdjectiveDescription();
 
-        if(Term is RussianVerb verb)
+        if(Term is VerbLexeme verb)
             return Lemma.GetVerbDescription();
 
         return Lemma.GetFallbackDescription();
@@ -82,12 +82,12 @@
     {
         try
         {
-            TTS.Speak($"{Lemma.DisplayText}, и в словаре - {Lemma.NormalForm}");
-            //await TTS.SpeakAsync($"{Lemma.DisplayText}, и в словаре - {Lemma.NormalForm}");
-            //await TTS.SpeakAsync($"This is a {GetDescription()} {Lemma.PartOfSpeech}, which translates to - {Term.Translation.Replace(",", " - or  ").Replace(";", " - and also - ")}", true);
+            SpeechService.Speak($"{Lemma.DisplayText}, и в словаре - {Lemma.NormalForm}");
+            //await SpeechService.SpeakAsync($"{Lemma.DisplayText}, и в словаре - {Lemma.NormalForm}");
+            //await SpeechService.SpeakAsync($"This is a {GetDescription()} {Lemma.PartOfSpeech}, which translates to - {Term.Translation.Replace(",", " - or  ").Replace(";", " - and also - ")}", true);
         }catch
         {
-           //TTS.Speak("There has been an error.", true);
+           //SpeechService.Speak("There has been an error.", true);
         }
     }
 

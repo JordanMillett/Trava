@@ -1,21 +1,22 @@
 using AutoMapper;
+using Trava.Scripts.Repositories;
 
-namespace Trava.Scripts.Translations;
+namespace Trava.Scripts.Models;
 
-public class RussianMaps : Profile
+public class LexemeMaps : Profile
 {
-    public RussianMaps()
+    public LexemeMaps()
     {
-        CreateMap<NounRecord, RussianNoun>()
-            .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => RussianTermParser.ParseGender(src.Gender)))
+        CreateMap<NounRecord, NounLexeme>()
+            .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => LexemeParser.ParseGender(src.Gender)))
             .ForMember(dest => dest.Animate, opt => opt.MapFrom(src => src.Animate == "1"))
             .ForMember(dest => dest.Indeclinable, opt => opt.MapFrom(src => src.Indeclinable == "1"))
             .ForMember(dest => dest.Uncountable, opt => opt.MapFrom(src => src.Uncountable == "1"))
             .ForMember(dest => dest.PluralOnly, opt => opt.MapFrom(src => src.PluralOnly == "1"));
 
-        CreateMap<VerbRecord, RussianVerb>();
-        CreateMap<AdjectiveRecord, RussianAdjective>();
-        CreateMap<OtherRecord, RussianTerm>();
+        CreateMap<VerbRecord, VerbLexeme>();
+        CreateMap<AdjectiveRecord, AdjectiveLexeme>();
+        CreateMap<OtherRecord, Lexeme>();
     }
 }
 
@@ -27,14 +28,14 @@ public enum GenderType
     None
 }
 
-public class RussianTerm
+public class Lexeme
 {
     public required string Term { get; set; } = default!;
     public required string Stressed { get; set; } = default!;
     public required string Translation { get; set; } = default!;
 }
 
-public class RussianNoun : RussianTerm
+public class NounLexeme : Lexeme
 {
     public required GenderType Gender { get; set; } = default!;
     public required bool Animate { get; set; } = default!;
@@ -55,7 +56,7 @@ public class RussianNoun : RussianTerm
     public required string PrepositionalPlural { get; set; } = default!;
 }
 
-public class RussianAdjective : RussianTerm
+public class AdjectiveLexeme : Lexeme
 {
     public string Comparative { get; set; } = default!;
     public string Superlative { get; set; } = default!;
@@ -89,7 +90,7 @@ public class RussianAdjective : RussianTerm
     public string PrepositionalPlural { get; set; } = default!;
 }
 
-public class RussianVerb : RussianTerm
+public class VerbLexeme : Lexeme
 {
     public string Aspect { get; set; } = default!;
     public string AspectualPartner { get; set; } = default!;
@@ -107,41 +108,21 @@ public class RussianVerb : RussianTerm
     public string ThirdPersonPlural { get; set; } = default!;
 }
 
-public static class RussianTermParser
+public static class LexemeParser
 {
     private static readonly IMapper Mapper;
 
-    static RussianTermParser()
+    static LexemeParser()
     {
         var config = new MapperConfiguration(cfg =>
         {
-            cfg.AddProfile<RussianMaps>();
+            cfg.AddProfile<LexemeMaps>();
         });
         Mapper = config.CreateMapper();
     }
 
-    public static RussianTerm? ConvertToTerm(RussianRepository repository, RussianLemma lemma)
+    public static Lexeme? ConvertToLexeme(TranslationRepository repository, Lemma lemma)
     {
-        /*
-         { "NOUN",  PartOfSpeechType.Noun},
-        { "ADJF",  PartOfSpeechType.Adjective},
-        { "ADJS",  PartOfSpeechType.Adjective},
-        { "COMP",  PartOfSpeechType.Adjective},
-        { "VERB",  PartOfSpeechType.Verb},
-        { "INFN",  PartOfSpeechType.Verb},
-        { "PRTF",  PartOfSpeechType.Verb},
-        { "PRTS",  PartOfSpeechType.Verb},
-        { "GRND",  PartOfSpeechType.Verb},
-        { "NUMR",  PartOfSpeechType.Noun},
-        { "ADVB",  PartOfSpeechType.Other},
-        { "NPRO",  PartOfSpeechType.Other},
-        { "PRED",  PartOfSpeechType.Other},
-        { "PREP",  PartOfSpeechType.Other},
-        { "CONJ",  PartOfSpeechType.Adjective},
-        { "PRCL",  PartOfSpeechType.Other},
-        { "INTJ",  PartOfSpeechType.Other},
-        */
-
         OtherRecord? retrieved = lemma.PartOfSpeech switch
         {
             PartOfSpeechType.Noun => repository.GetNoun(lemma.NormalForm),
@@ -156,20 +137,20 @@ public static class RussianTermParser
         if(retrieved == null)
             return null;
 
-        RussianTerm term = null!;
+        Lexeme term = null!;
 
         if(retrieved is NounRecord noun)
         {
-            term = Mapper.Map<RussianNoun>(noun);
+            term = Mapper.Map<NounLexeme>(noun);
         }else if (retrieved is VerbRecord verb)
         {
-            term = Mapper.Map<RussianVerb>(verb);
+            term = Mapper.Map<VerbLexeme>(verb);
         }else if (retrieved is AdjectiveRecord adjective)
         {
-            term = Mapper.Map<RussianAdjective>(adjective);            
+            term = Mapper.Map<AdjectiveLexeme>(adjective);            
         }else if (retrieved is OtherRecord other)
         {
-            term = Mapper.Map<RussianTerm>(other);
+            term = Mapper.Map<Lexeme>(other);
         }
 
         term.Term = lemma.NormalForm;

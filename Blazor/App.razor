@@ -1,9 +1,9 @@
 ﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Shared.Layout)" />
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Blazor.Layout)" />
     </Found>
     <NotFound>
-        <LayoutView Layout="@typeof(Shared.Layout)">
+        <LayoutView Layout="@typeof(Blazor.Layout)">
             <PageTitle>404 Not Found</PageTitle>
             <p>404 - Page Not Found</p>
         </LayoutView>

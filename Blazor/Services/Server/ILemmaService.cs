@@ -1,9 +1,9 @@
-using Trava.Scripts.Translations;
+using Trava.Scripts.Models;
 using Python.Runtime;
 
-namespace Trava.Services;
+namespace Trava.Blazor.Services.Server;
 
-public class MorphologyService
+public class ILemmaService
 {
     private dynamic? morphAnalyzer;
 
@@ -30,7 +30,12 @@ public class MorphologyService
         }
     }
 
-    public RussianLemma? Lemmatize(string displayText)
+    public bool PythonRunning()
+    {
+        return PythonEngine.IsInitialized;
+    }
+
+    public Lemma? Lemmatize(string displayText)
     {
         if (morphAnalyzer == null)
             return null;
@@ -44,7 +49,7 @@ public class MorphologyService
             foreach (PyObject item in best.tag.grammemes)
                 grammemes.Add(item.ToString()!);
 
-            RussianLemma created = RussianLemmaParser.ExtractLemma(displayText, best, grammemes);
+            Lemma created = LemmaParser.ExtractLemma(displayText, best, grammemes);
 
             return created; 
         }

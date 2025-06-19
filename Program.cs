@@ -1,17 +1,24 @@
-using Trava.Services;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Trava.Blazor.Services.Client;
+using Trava.Blazor.Services.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+builder.Services.Configure<RazorPagesOptions>(options =>
+{
+    options.RootDirectory = "/Blazor";
+});
+
 //PER SERVER INSTANCE
-builder.Services.AddSingleton<MorphologyService>();
-builder.Services.AddSingleton<TranslationService>();
+builder.Services.AddSingleton<ILemmaService>();
+builder.Services.AddSingleton<ILexemeService>();
 
 //PER CLIENT INSTANCE
-builder.Services.AddScoped<TextToSpeechService>();
-//builder.Services.AddScoped<ClientService>();
+builder.Services.AddScoped<IBrowserLogger>();
+builder.Services.AddScoped<ISpeechService>();
 
 builder.Services.AddBlazorBootstrap();
 var app = builder.Build();

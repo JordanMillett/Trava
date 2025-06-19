@@ -1,4 +1,4 @@
-namespace Trava.Scripts.Translations;
+namespace Trava.Scripts.Models;
 
 public enum PartOfSpeechType
 {
@@ -25,7 +25,7 @@ public enum NounCaseType
     None
 }
 
-public class RussianLemma
+public class Lemma
 {
     public string DisplayText { get; set; } = default!;
     public string NormalForm { get; set; } = default!;
@@ -39,7 +39,7 @@ public class RussianLemma
     public int Tense { get; set; } = default!;
     public bool Perfective { get; set; } = default!;
 
-    public RussianLemma(string displayText = default!)
+    public Lemma(string displayText = default!)
     {
         DisplayText = displayText;
     }
@@ -97,11 +97,11 @@ public class RussianLemma
     }
 }
 
-public static class RussianLemmaParser
+public static class LemmaParser
 {
-    public static RussianLemma ExtractLemma(string displayText, dynamic data, List<string> grammemes)
+    public static Lemma ExtractLemma(string displayText, dynamic data, List<string> grammemes)
     {
-        RussianLemma lemma = new RussianLemma();
+        Lemma lemma = new Lemma();
         lemma.DisplayText = displayText;
 
         if(data.normal_form != null)
