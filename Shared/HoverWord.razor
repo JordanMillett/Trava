@@ -7,20 +7,21 @@
     <div class="popup">
         @if(HoverLoaded)
         {
+            <span><small>@Lemma.PartOfSpeech.ToString()</small></span>
+            
+            string description = GetDescription();
+
+            if(!string.IsNullOrEmpty(description))
+            {
+                <span><small> (@description)</small></span>
+            }
+
+            <br>
+            <span><strong>@Lemma.NormalForm</strong>  ← @Lemma.DisplayText</span>
+            <hr style="margin: 0; padding:0;">
+
             @if(Term != null)
             {
-                <span><small>@Lemma.PartOfSpeech.ToString()</small></span>
-                
-                string description = GetDescription();
-
-                if(!string.IsNullOrEmpty(description))
-                {
-                    <span><small> (@description)</small></span>
-                }
-
-                <br>
-                <span><strong>@Lemma.NormalForm</strong>  ← @Lemma.DisplayText</span>
-                <hr style="margin: 0; padding:0;">
                 string[] definitions = Term.Translation.Split(";");
                 foreach (string definition in definitions)
                 {
@@ -32,7 +33,7 @@
             }
             else
             {
-                <span><strong><i>unknown term</i></strong></span>
+                <span><i>translation unknown</i></span>
             }
         }
     </div>
@@ -74,15 +75,16 @@
         if(Term is RussianVerb verb)
             return Lemma.GetVerbDescription();
 
-        return "";
+        return Lemma.GetFallbackDescription();
     }
 
     public async Task ReadAloud()
     {
         try
         {
-            await TTS.SpeakAsync($"{Lemma.DisplayText}, и в словаре - {Lemma.NormalForm}");
-            await TTS.SpeakAsync($"This is a {GetDescription()} {Lemma.PartOfSpeech}, which translates to - {Term.Translation.Replace(",", " - or  ").Replace(";", " - and also - ")}", true);
+            TTS.Speak($"{Lemma.DisplayText}, и в словаре - {Lemma.NormalForm}");
+            //await TTS.SpeakAsync($"{Lemma.DisplayText}, и в словаре - {Lemma.NormalForm}");
+            //await TTS.SpeakAsync($"This is a {GetDescription()} {Lemma.PartOfSpeech}, which translates to - {Term.Translation.Replace(",", " - or  ").Replace(";", " - and also - ")}", true);
         }catch
         {
            //TTS.Speak("There has been an error.", true);

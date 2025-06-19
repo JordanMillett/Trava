@@ -44,6 +44,25 @@ public class RussianLemma
         DisplayText = displayText;
     }
 
+    public string GetFallbackDescription()
+    {
+        string nouncase = "";
+        if(NounCase != NounCaseType.None)
+            nouncase = NounCase.ToString();
+        string person = Person == 1 ? "First-Person" : Person == 2 ? "Second-Person" : Person == 3 ? "Third-Person" : "";
+
+        if(string.IsNullOrEmpty(person) && string.IsNullOrEmpty(nouncase))
+            return "";
+
+        if(string.IsNullOrEmpty(person))
+            return $"{nouncase}";
+
+        if(string.IsNullOrEmpty(nouncase))
+            return $"{person}";
+
+        return $"{person} {nouncase}";
+    }
+
     public string GetNounDescription()
     {
         string number = Plural ? "Plural" : "Singular";
