@@ -6,13 +6,13 @@ public class IBrowserLogger
 {
     private readonly IJSRuntime Runtime;
 
-    public IBrowserLogger(IJSRuntime JS)
+    public IBrowserLogger(IJSRuntime IJS)
     {
-        Runtime = JS;
+        Runtime = IJS;
     }
     
     public void Log(string message)
     {
-        _ = Runtime.InvokeVoidAsync("console.log", message);
+        _ = Runtime.InvokeVoidAsync("console.log", message).AsTask().ConfigureAwait(false);
     }
 }

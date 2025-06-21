@@ -6,19 +6,14 @@ public class ISpeechService
 {
     private readonly IJSRuntime Runtime;
 
-    public ISpeechService(IJSRuntime JS)
+    public ISpeechService(IJSRuntime IJS)
     {
-        Runtime = JS;
-    }
-
-    public async Task Preload()
-    {   
-        await Runtime.InvokeVoidAsync("textToSpeech.preload");
+        Runtime = IJS;
     }
 
     public void Speak(string text, bool english = false)
     {   
-        _ = Runtime.InvokeVoidAsync("textToSpeech.speak", text, english);
+        _ = Runtime.InvokeVoidAsync("textToSpeech.speak", text, english).AsTask().ConfigureAwait(false);;
     }
 
     public async Task SpeakAsync(string text, bool english = false)

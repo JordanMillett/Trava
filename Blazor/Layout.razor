@@ -5,14 +5,14 @@
 
 <div class="bb-page">
     <Sidebar Href="/"
-             IconName="IconName.BootstrapFill"
+             IconName="IconName.None"
              Title="Trava"
              DataProvider="SidebarDataProvider"
              />
 
     <main>
         <div class="bb-top-row justify-content-center">
-            <h1>Trava</h1>
+            <h1 class="title m-0">Trava</h1>
         </div>
 
         <article class="content px-3">
@@ -25,19 +25,10 @@
 {
     IEnumerable<NavItem> navItems;
 
-    public bool ClientInitialized = false;
-
-    protected override async Task OnAfterRenderAsync(bool first)
+    protected override async Task OnInitializedAsync()
     {
-        if(!first || ClientInitialized)
-            return;
-
-        await SpeechService.Preload();
-        BrowserLogger.Log("Speech Service Preloaded.");
         await LemmaService.TryStartPython();
         BrowserLogger.Log($"Python Service Status: {(LemmaService.PythonRunning() ? "Running" : "Not Running")}.");
-        
-        ClientInitialized = true;
     }
 
     private async Task<SidebarDataProviderResult> SidebarDataProvider(SidebarDataProviderRequest request)

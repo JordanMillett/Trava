@@ -1,13 +1,26 @@
 :root
 {
-    --theme-text: var(black);
-    --theme-background: var(white);
-}
+    --theme-primary: green;
 
+    --theme-text: black;
+    --theme-background: white;
+}
 
 html, body
 {
-    font-family: "Commissioner", sans-serif;
+    font-family: "Commissioner", "Comic Sans MS";
     background-color: var(--theme-background);
     color: var(--theme-text);
+}
+
+.title
+{
+    font-family: "Rubik Mono One", "Comic Sans MS";
+    color: var(--theme-primary);
+}
+
+.cursive
+{
+    font-family: "Lobster", "Comic Sans MS";
+    font-size: 32px;
 }

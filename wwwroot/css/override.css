@@ -1,0 +1,10 @@
+:root
+{
+    --bb-sidebar-top-row-background-color: var(--theme-primary);
+    --bb-sidebar-top-row-border-color: var(--theme-primary);
+}
+
+.navbar-brand-text
+{
+    font-family: "Rubik Mono One", "Comic Sans MS";
+}
