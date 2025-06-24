@@ -5,13 +5,20 @@ namespace Trava.Blazor.Services.Server;
 
 public class ILemmaService
 {
+    private readonly IServerLogger Logger;
+
     private dynamic? morphAnalyzer;
+
+    public ILemmaService(IServerLogger logger)
+    {
+        Logger = logger;
+    }
 
     public async Task TryStartPython()
     {
         if(!PythonEngine.IsInitialized)
         {
-            Console.WriteLine("Python Loading...");
+            Logger.Log("Python Loading...", IServerLogger.LogSource.System);
 
             Runtime.PythonDLL = @"C:\Users\jello\AppData\Local\Programs\Python\Python38\python38.dll";
             PythonEngine.Initialize();
@@ -20,7 +27,7 @@ public class ILemmaService
             while(!PythonEngine.IsInitialized)
                 await Task.Delay(100);
 
-            Console.WriteLine("Python Started.");
+            Logger.Log("Python Started.", IServerLogger.LogSource.System);
 
             using (Py.GIL())
             {

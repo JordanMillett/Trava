@@ -167,7 +167,6 @@ public static class LemmaParser
     {
         if (raw != null && nounCaseMap.TryGetValue(raw, out var value))
             return value;
-        //Console.WriteLine(raw);
         return NounCaseType.None;
     }
 
@@ -182,7 +181,6 @@ public static class LemmaParser
     {
         if (raw != null && genderMap.TryGetValue(raw, out var value))
             return value;
-        //Console.WriteLine(raw);
         return GenderType.None;
     }
 }
