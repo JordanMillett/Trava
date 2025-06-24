@@ -14,13 +14,41 @@ public class IServerLogger
     }
 
     private readonly DateTime StartTime;
+    private int Activity = 0;
+    private Timer? pulseTimer;
+    private readonly TimeSpan pulseInterval = TimeSpan.FromHours(4);
+    
+    private readonly List<string> AllLogs = new(); 
+    private readonly int MaxLogs = 1000;
 
     public IServerLogger()
     {
         StartTime = DateTime.UtcNow;
-
         Console.ForegroundColor = ConsoleColor.White;
         Console.BackgroundColor = ConsoleColor.Black;
+
+        SchedulePulse();
+    }
+
+    private void SchedulePulse()
+    {
+        pulseTimer = new Timer(_ =>
+        {
+            try
+            {
+                Pulse();
+            }
+            catch{}
+        }, null, TimeSpan.Zero, pulseInterval);
+    }
+
+    public void Pulse()
+    {
+        TimeSpan uptime = DateTime.UtcNow - StartTime;
+        string uptimeFormatted = $"{uptime.Days}d {uptime.Hours:D2}h {uptime.Minutes:D2}m";
+
+        Log($"Server Uptime: {uptimeFormatted} - Activity Recorded: {Activity}x", LogSource.Context);
+        Activity = 0;
     }
 
     public void Log<T>(T obj, LogSource source = LogSource.User)
@@ -70,11 +98,19 @@ public class IServerLogger
             _ => "???"
         };
 
-        string time = (DateTime.UtcNow - StartTime).ToString(@"hh\:mm\:ss\:fff");
+        string time = DateTime.UtcNow.ToString(@"hh\:mm\:ss\:fff");
         string line = $"[{time}]\t({prefix})\t{message}";
-        Console.WriteLine(line);
 
+        lock (AllLogs)
+        {
+            AllLogs.Insert(0, line);
+            if (AllLogs.Count > MaxLogs)
+                AllLogs.RemoveAt(AllLogs.Count - 1);
+        }
+
+        Console.WriteLine(line);
         Console.ForegroundColor = ConsoleColor.White;
+        Activity++;
     }
 
     public void LogWarning(string message,
@@ -95,5 +131,13 @@ public class IServerLogger
         string path = Path.GetFileName(file);
         Log(ex.Message, LogSource.Error);
         Log($"^ {path}({line},1) -> {function}()", LogSource.Context);
+    }
+
+    public IReadOnlyList<string> GetLogs()
+    {
+        lock (AllLogs)
+        {
+            return AllLogs.AsReadOnly();
+        }
     }
 }

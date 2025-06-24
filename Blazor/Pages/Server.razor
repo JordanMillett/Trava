@@ -1,0 +1,60 @@
+@page "/server"
+@inject IServerLogger ServerLogger
+@inject INetworkIdentity NetworkIdentity
+
+<h1>Server</h1>
+
+<p>Your Connection ID: <strong>@NetworkIdentity.ConnectionID</strong></p>
+
+<div id="textbox">
+
+    @foreach (string log in ServerLogger.GetLogs())
+    {
+        <p style="color: @GetColor(log)">@log</p>
+    }
+
+</div>
+
+<style>
+    #textbox
+    {
+        background-color: black;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    #textbox p
+    {
+        color: white;
+        padding-top: 6px;
+        font-size: 12px;
+        font-family: monospace;
+        margin: 0;
+    }
+</style>
+
+@code
+{
+    string GetColor(string log)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(log, @"\(([^)]+)\)");
+
+        if (!match.Success)
+            return "";
+
+        string prefix = match.Groups[1].Value;
+
+        return prefix switch
+        {
+            "Usr" => "#CCCCCC",   
+            "Txt" => "#CCCCCC",    
+            "Sys" => "#00FF00",      
+            "Wrn" => "#FFFF00",     
+            "Err" => "#FF0000",     
+            "Inf" => "#666666",      
+            _ => "#FF0000"         
+        };
+    }
+}

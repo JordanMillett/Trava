@@ -59,11 +59,11 @@ public class IAuthorizationService : CircuitHandler
         {
             AuthStates[connectionID] = true;
             Logger.Log($"Connection Authorized: {connectionID}", IServerLogger.LogSource.System);
-            LoginAllowed = false;
+            //LoginAllowed = false;
         }else
         {
             Logger.Log($"Connection Failed To Authorize: {connectionID}", IServerLogger.LogSource.Warning);
-            Logger.Log($"Failed Passcode: {connectionID}", IServerLogger.LogSource.Warning);
+            Logger.Log($"Failed Passcode: {passcode}", IServerLogger.LogSource.Warning);
         }
     }
 }

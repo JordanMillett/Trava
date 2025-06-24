@@ -80,9 +80,13 @@
         if (editContext.Validate())
         {
             NetworkIdentity.TryAuthorize(userLogin.Passcode);
+
+            if(NetworkIdentity.IsAuthorized())
+                editContext = new EditContext(userLogin);
         }
 
         userLogin = new();
+        
     }
 
     protected override async Task OnInitializedAsync()
@@ -110,6 +114,7 @@
         {
             new NavItem { Href = "/home", IconName = IconName.HouseDoorFill, Text = "Home" },
             new NavItem { Href = "/test", IconName = IconName.Bug, Text = "Test" },
+            new NavItem { Href = "/server", IconName = IconName.Server, Text = "Server" },
         };
     }
 }
