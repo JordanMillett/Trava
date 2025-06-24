@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Trava.Blazor.Services.Client;
 using Trava.Blazor.Services.Server;
@@ -18,14 +19,22 @@ builder.Services.Configure<RazorPagesOptions>(options =>
     options.RootDirectory = "/Blazor";
 });
 
+builder.Services.Configure<AuthConfig>(builder.Configuration.GetSection("AuthConfig"));
+
 //PER SERVER INSTANCE
-builder.Services.AddSingleton<IServerLogger>();
-builder.Services.AddSingleton<IAuthorizationService>();
+builder.Services.AddSingleton<IServerLogger>(); //Logger
+builder.Services.AddSingleton<IAuthorizationService>(); //Network Config
+builder.Services.AddSingleton<CircuitHandler>(sp => sp.GetRequiredService<IAuthorizationService>()); //Network Config
+
 builder.Services.AddSingleton<ILemmaService>();
 builder.Services.AddSingleton<ILexemeService>();
 
+
 //PER CLIENT INSTANCE
-builder.Services.AddScoped<IBrowserLogger>();
+builder.Services.AddScoped<IBrowserLogger>(); //Logger
+builder.Services.AddScoped<INetworkIdentity>(); //Network Config
+builder.Services.AddScoped<CircuitHandler>(sp => sp.GetRequiredService<INetworkIdentity>()); //Network Config
+
 builder.Services.AddScoped<ISpeechService>();
 
 builder.Services.AddBlazorBootstrap();

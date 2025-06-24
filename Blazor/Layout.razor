@@ -1,32 +1,97 @@
-﻿@inherits LayoutComponentBase
+﻿@using Trava.Scripts.Models
+
+@inherits LayoutComponentBase
 @inject ILemmaService LemmaService
 @inject IBrowserLogger BrowserLogger
 @inject ISpeechService SpeechService
+@inject INetworkIdentity NetworkIdentity
 
-<div class="bb-page">
-    <Sidebar Href="/"
-             IconName="IconName.None"
-             Title="Trava"
-             DataProvider="SidebarDataProvider"
-             />
+@if(!string.IsNullOrEmpty(NetworkIdentity.ConnectionID))
+{
+    @if(NetworkIdentity.IsAuthorized())
+    {
+        <div class="bb-page">
+            <Sidebar Href="/"
+                    IconName="IconName.None"
+                    Title="Trava"
+                    DataProvider="SidebarDataProvider"
+                    />
 
-    <main>
-        <div class="bb-top-row justify-content-center">
-            <h1 class="title m-0">Trava</h1>
+            <main>
+                <div class="bb-top-row justify-content-center">
+                    <h1 class="title m-0">Trava</h1>
+                </div>
+
+                <article class="content px-3">
+                    <div class="py-3">@Body</div>
+                </article>
+            </main>
         </div>
+    }else
+    {
+        if(NetworkIdentity.LoginAllowed())
+        {
+            <EditForm EditContext="@editContext" OnValidSubmit="HandleOnValidSubmit">
+                <DataAnnotationsValidator />
 
-        <article class="content px-3">
-            <div class="py-3">@Body</div>
-        </article>
-    </main>
-</div>
+                <div class="row m-0 pt-4">
+                    <div class="offset-2 col-8 p-4">
+                        <div class="form-group row">
+                            <label class="col-1 col-form-label">Passcode: </label>
+                            <div class="col-11">
+                                <PasswordInput @bind-Value="@userLogin.Passcode" />
+                                <ValidationMessage For="@(() => userLogin.Passcode)" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 text-right">
+                                <Button Type="ButtonType.Submit" Color="ButtonColor.Success" Class="float-end me-2">Login</Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </EditForm>
+        }else
+        {
+            <h1 class="text-center pt-4">Primary User Is Already Logged In.</h1>
+        }
+    }
+}else
+{
+    <!--<h1>Connecting...</h1>-->
+}
 
 @code 
 {
     IEnumerable<NavItem> navItems;
+    bool Connected = false;
+    
+    private LoginRequest userLogin = new();
+    private EditContext? editContext;
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(userLogin);
+    }
+
+    public void HandleOnValidSubmit()
+    {
+        if (editContext.Validate())
+        {
+            NetworkIdentity.TryAuthorize(userLogin.Passcode);
+        }
+
+        userLogin = new();
+    }
 
     protected override async Task OnInitializedAsync()
     {
+        //GET AUTH HERE
+        //await NetworkIdentity.WaitForConnection();
+
+        BrowserLogger.Log($"Current Connection ID: {NetworkIdentity.ConnectionID}");
+
         await LemmaService.TryStartPython();
         BrowserLogger.Log($"Python Service Status: {(LemmaService.PythonRunning() ? "Running" : "Not Running")}.");
     }
@@ -44,6 +109,7 @@
         return new List<NavItem>
         {
             new NavItem { Href = "/home", IconName = IconName.HouseDoorFill, Text = "Home" },
+            new NavItem { Href = "/test", IconName = IconName.Bug, Text = "Test" },
         };
     }
 }
