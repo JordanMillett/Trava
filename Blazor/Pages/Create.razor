@@ -1,9 +1,12 @@
-@page "/home"
+@page "/create"
 @inject ILemmaService LemmaService
+@inject INoteService NoteService
 
-<h1>Home</h1>
+<h1>Create</h1>
 
 <Button Color="ButtonColor.Primary" class="btn" @onclick="Process">Process Text</Button>
+
+<Button Color="ButtonColor.Primary" class="btn" @onclick="Save">Save Note</Button>
 
 <Dropdown Color="DropdownColor.Primary">
     <DropdownToggleButton>
@@ -18,6 +21,8 @@
         }
     </DropdownMenu>
 </Dropdown>
+
+
 
 <br><br>
 
@@ -40,6 +45,8 @@
 }
 
 <br><br>
+
+<TextInput @bind-Value="@Title" Placeholder="Note Title..." />
 
 <div class="row">
     <div class="col-12">
@@ -72,6 +79,7 @@
     public HighlightTypes SelectedHighlight = HighlightTypes.None;
 
     string InputText = "";
+    string Title = "";
 
     List<Lemma> Lemmas = [];
 
@@ -79,6 +87,18 @@
     {
         SelectedHighlight = chosen;
     }
+
+    public void Save()
+    {
+        if(!string.IsNullOrEmpty(Title) && !string.IsNullOrEmpty(InputText))
+        {
+            NoteService.CreateNote(Title, InputText);
+
+            InputText = "";
+            Title = "";
+            Process();
+        }
+    }  
 
     public void Process()
     {

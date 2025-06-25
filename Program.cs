@@ -26,6 +26,7 @@ builder.Services.AddSingleton<IServerLogger>(); //Logger
 builder.Services.AddSingleton<IAuthorizationService>(); //Network Config
 builder.Services.AddSingleton<CircuitHandler>(sp => sp.GetRequiredService<IAuthorizationService>()); //Network Config
 
+builder.Services.AddSingleton<INoteService>();
 builder.Services.AddSingleton<ILemmaService>();
 builder.Services.AddSingleton<ILexemeService>();
 

@@ -52,7 +52,7 @@
 @code 
 {
     [Parameter, EditorRequired] public Lemma Lemma { get; set; }
-    [Parameter, EditorRequired] public Home.HighlightTypes SelectedHighlight { get; set; }
+    [Parameter, EditorRequired] public Create.HighlightTypes SelectedHighlight { get; set; }
 
     bool HoverLoaded = false;
     Lexeme Term = null!;
@@ -93,10 +93,10 @@
 
     public string GetCSSColor()
     {
-        if(SelectedHighlight == Home.HighlightTypes.None)
+        if(SelectedHighlight == Create.HighlightTypes.None)
             return "";
 
-        if(SelectedHighlight == Home.HighlightTypes.PartsOfSpeech)
+        if(SelectedHighlight == Create.HighlightTypes.PartsOfSpeech)
             return Lemma.PartOfSpeech switch
             {
                 PartOfSpeechType.Noun => "yellow",
@@ -106,7 +106,7 @@
                 _ => "tan"
             };
 
-        if(SelectedHighlight == Home.HighlightTypes.NounCase)
+        if(SelectedHighlight == Create.HighlightTypes.NounCase)
         {
             if(Lemma.PartOfSpeech != PartOfSpeechType.Unknown)
             {

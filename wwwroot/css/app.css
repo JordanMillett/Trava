@@ -11,6 +11,8 @@ html, body
     font-family: "Commissioner", "Comic Sans MS";
     background-color: var(--theme-background);
     color: var(--theme-text);
+    scrollbar-width: thin;
+    scrollbar-color: var(--theme-primary) transparent;
 }
 
 .title
