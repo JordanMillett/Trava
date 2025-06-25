@@ -6,16 +6,29 @@
 <div class="row p-2 g-2">
     @foreach (NoteRecord note in NoteService.GetAllNotes())
     {
-        <div class="col-4">
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3">
             <div class="p-3 m-2" style="border: 1px solid; border-radius: 4px;">
                 <div class="pb-2" style="position: sticky; top:0; background-color:white;">
                     <h4 style="text-wrap: nowrap; overflow-x:hidden;">@note.Title</h4>
                     <hr>
                 </div>
-                <div style="max-height: 400px; overflow:auto;">
+                <div class="scroll-fade" style="min-height: 300px; max-height: 300px; overflow:auto;">
                     <p>@note.Contents</p>
                 </div>
             </div>
         </div>
     }
 </div>
+
+<style>
+    .scroll-fade 
+    {
+        mask-image: linear-gradient(
+            to bottom,
+            transparent 0,
+            black 2%,
+            black 98%,
+            transparent 100%
+        );
+    }
+</style>
